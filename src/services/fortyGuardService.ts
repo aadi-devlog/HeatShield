@@ -1,100 +1,43 @@
 // src/services/fortyGuardService.ts
-// Official FortyGuard API integration.
-// API Key: read from import.meta.env.VITE_FORTYGUARD_API_KEY (set in .env, never committed).
-// Pattern: POST endpoint → activity_id → poll GET /v1/status/{id} → Completed → normalize.
+// Official FortyGuard API integration via Vercel Serverless Function.
+// API Key is ONLY configured server-side (FORTYGUARD_API_KEY).
+// Pattern: Frontend calls /api/fortyguard -> Vercel handles async polling -> returns final data.
 
 import axios, { AxiosError } from 'axios';
 import type { EnvParamsResult, HeatmapResult, FortyGuardTaskResult } from '../types';
 import { cacheService } from './cacheService';
 
-const BASE_URL = 'https://api.fortyguard.com/v1';
-const POLL_INTERVAL_MS = 3000;
-const POLL_TIMEOUT_MS  = 120_000;
+// We call the local or Vercel deployed endpoint
+const PROXY_URL = '/api/fortyguard';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function getApiKey(): string {
-  const key = import.meta.env.VITE_FORTYGUARD_API_KEY as string | undefined;
-  if (!key) throw new Error('FortyGuard API key not configured. Check .env file.');
-  return key;
-}
-
-function buildHeaders() {
-  return {
-    'api-key': getApiKey(),
-    'Content-Type': 'application/json',
-  };
-}
 
 function buildCacheKey(namespace: string, params: Record<string, unknown>): string {
   return `${namespace}:${JSON.stringify(params)}`;
 }
 
-// ─── Polling ─────────────────────────────────────────────────────────────────
-
-interface StatusResponse {
-  error: boolean;
-  status_code: number;
-  message: string;
-  data?: {
-    activity_id: string;
-    status: string;
-    result?: any;
-    map_data?: any;
-    stats_data?: any;
-  };
-}
-
-async function pollTaskStatus(activityId: string): Promise<StatusResponse> {
-  const deadline = Date.now() + POLL_TIMEOUT_MS;
-
-  while (Date.now() < deadline) {
-    await new Promise(res => setTimeout(res, POLL_INTERVAL_MS));
-
-    const res = await axios.get<StatusResponse>(
-      `${BASE_URL}/status/${activityId}`,
-      { headers: buildHeaders() }
-    );
-
-    const statusObj = res.data?.data;
-    const normalized = (statusObj?.status || res.data?.message || '').toLowerCase();
-    
-    if (normalized === 'completed') return res.data;
-    if (normalized === 'failed') {
-      throw new Error(`FortyGuard task ${activityId} failed: ${res.data.message ?? 'unknown error'}`);
-    }
-    // Processing — keep polling
-  }
-
-  throw new Error(`FortyGuard task ${activityId} timed out after ${POLL_TIMEOUT_MS / 1000}s`);
-}
-
 // ─── Task Submission ──────────────────────────────────────────────────────────
 
-interface ActivityResponse {
-  data: { activity_id: string };
-}
-
-async function submitTask<T>(endpoint: string, payload: T): Promise<string> {
+async function submitAndPoll<T>(endpoint: string, payload: T): Promise<{ activityId: string; data: any }> {
   try {
-    const res = await axios.post<ActivityResponse>(
-      `${BASE_URL}/${endpoint}`,
-      payload,
-      { headers: buildHeaders() }
-    );
-    const activityId = res.data?.data?.activity_id;
-    if (!activityId) throw new Error(`FortyGuard ${endpoint}: no activity_id in response`);
-    return activityId;
+    const res = await axios.post(PROXY_URL, {
+      endpoint,
+      payload
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    return res.data;
 
   } catch (err) {
     if (err instanceof AxiosError) {
       const status = err.response?.status;
-      const msg = (err.response?.data as { message?: string })?.message ?? err.message;
-      if (status === 401) throw new Error('FortyGuard: Invalid or missing API key (401)');
-      if (status === 403) throw new Error('FortyGuard: Access forbidden — check API key permissions (403)');
-      if (status === 422) throw new Error(`FortyGuard: Invalid request payload (422): ${msg}`);
-      if (status === 429) throw new Error('FortyGuard: Rate limit exceeded (429) — please wait and retry');
-      throw new Error(`FortyGuard API error ${status}: ${msg}`);
+      const msg = (err.response?.data as { error?: string; details?: any })?.error ?? err.message;
+      if (status === 401 || status === 403) throw new Error('Backend Authorization Failed (check Vercel API key)');
+      if (status === 429) throw new Error('Rate limit exceeded — please wait and retry');
+      throw new Error(`Server Proxy error ${status}: ${msg}`);
     }
     throw err;
   }
@@ -138,21 +81,12 @@ export async function fetchEnvParams(
       ],
     };
 
-    let activityId: string;
+    let activityId: string = 'unknown';
     try {
-      activityId = await submitTask('env_params', payload);
-    } catch (err) {
-      return {
-        activityId: 'unknown',
-        status: 'failed' as const,
-        error: err instanceof Error ? err.message : String(err),
-        requestedAt,
-      };
-    }
-
-    try {
-      const statusData = await pollTaskStatus(activityId);
-      const raw = statusData.data?.result ?? {};
+      const response = await submitAndPoll('env_params', payload);
+      activityId = response.activityId;
+      
+      const raw: any = response.data?.result ?? {};
       const metadata = raw.metadata ?? {};
       const loc = raw.locations?.[0] ?? {};
       const params = loc.parameters ?? {};
@@ -219,21 +153,12 @@ export async function fetchHeatmap(
       granularity: 100,
     };
 
-    let activityId: string;
+    let activityId: string = 'unknown';
     try {
-      activityId = await submitTask('heatmap', payload);
-    } catch (err) {
-      return {
-        activityId: 'unknown',
-        status: 'failed' as const,
-        error: err instanceof Error ? err.message : String(err),
-        requestedAt,
-      };
-    }
-
-    try {
-      const statusData = await pollTaskStatus(activityId);
-      const raw = statusData.data ?? {};
+      const response = await submitAndPoll('heatmap', payload);
+      activityId = response.activityId;
+      
+      const raw: any = response.data ?? {};
 
       const result: FortyGuardTaskResult = {
         activityId,

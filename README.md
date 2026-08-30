@@ -7,35 +7,24 @@ Built for the **FortyGuard Hackathon '26** — *Track 3: Industrial & Enterprise
 ![React](https://img.shields.io/badge/React-18-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
 ![Vite](https://img.shields.io/badge/Vite-5.0-purple)
+![Vercel](https://img.shields.io/badge/Vercel-Serverless-black)
 
 ## 📖 Overview
 
 **HeatShield AI** is a real-time, hyperlocal heat risk intelligence platform designed for industrial and logistics enterprise operations. Extreme heat reduces worker safety, degrades equipment, and disrupts supply chains. HeatShield AI consumes the **FortyGuard Temperature API** (providing 20m² resolution at 2m above ground) to offer actionable operational intelligence.
 
-The prototype specifically monitors the **Phoenix Logistics Hub**, transforming raw environmental data into concrete operational decisions (e.g., shifting heavy manual labor to cooler hours, increasing hydration protocols).
+## 🏛️ Architecture & Security
 
-## ✨ Key Features
+To ensure absolute security of the FortyGuard API key, HeatShield AI uses a **Serverless Proxy Architecture** deployed on Vercel:
 
-- **Live FortyGuard API Integration:** Uses the authentic asynchronous submit-and-poll pattern (`/v1/env_params` -> `/v1/status`) to fetch real-world hyperlocal environmental data.
-- **Facility Heat Risk Gauge:** Calculates a weighted risk score based on temperature, humidity, and operational intensity.
-- **"Why?" Explainer & Before/After Panels:** Transparently explains the AI's risk calculation and provides measurable operational recommendations.
-- **Demo vs. Live Mode:** Seamlessly toggles between real API data and simulated demo data for judging and presentation purposes.
-- **Escalation Simulation:** A dedicated testing flow that triggers a critical heat spike to demonstrate the system's emergency alert capabilities.
-- **Data Provenance:** Provides complete transparency on data source, task ID, endpoint, and capability.
-
-## 🛠️ Technology Stack
-
-- **Frontend Framework:** React 18 with TypeScript
-- **Build Tool:** Vite
-- **Styling:** Tailwind CSS
-- **Icons:** Lucide React
-- **Demo Recording:** Playwright (for automated UI walkthroughs)
+```text
+Browser (React)  →  Vercel Serverless API (/api/fortyguard)  →  FortyGuard API
+```
+- The frontend **never** receives or handles the API key.
+- The async task submission and status polling happens **entirely server-side** within the Vercel function.
+- The browser only receives the final normalized JSON data.
 
 ## 🚀 Getting Started
-
-### Prerequisites
-- Node.js (v18+ recommended)
-- A valid [FortyGuard Hackathon](https://www.fortyguard.com/) API Key.
 
 ### 1. Installation
 
@@ -45,49 +34,24 @@ cd HeatShield
 npm install
 ```
 
-### 2. Environment Variables
+### 2. Environment Configuration
 
+**LOCAL DEVELOPMENT:**
 Create a `.env` file in the root directory and add your FortyGuard API key. **Never commit this file.**
-
 ```env
 # .env
 FORTYGUARD_API_KEY=your_api_key_here
 ```
 
-### 3. Running the Application
+**VERCEL PRODUCTION:**
+The `FORTYGUARD_API_KEY` must be securely configured directly in your Vercel Project Environment Variables. Do NOT use `VITE_` prefixes.
 
-Start the local Vite development server:
+### 3. Running the Application Locally
+
+Start the local development server (using Vercel CLI to support serverless API routes):
 ```bash
 npm run dev
 ```
+*(Ensure `npm run dev` maps to `vercel dev` if you want local API routing, or use Vite proxy).*
 
-Open [http://localhost:5173](http://localhost:5173) to view the dashboard in your browser.
-
-## 📡 API Implementation Details
-
-HeatShield AI integrates the **NVIDIA-recognized Temperature API** using the required asynchronous pattern:
-
-1. **Submission:** `POST /v1/env_params` 
-   - *Note:* Our implementation successfully handles FortyGuard payload requirements by passing explicit parameters (including the required root `temperature` field for this specific capability layer).
-2. **Polling:** `GET /v1/status/{id}`
-   - The application polls this endpoint every 2 seconds until it receives the `Completed` message, after which it extracts the nested JSON data from the `data.result.locations[0].parameters` array.
-
-## 🎬 Demo Video
-
-A fully automated, choreographed 3-minute video demonstration of the application was recorded using sceen recorder. 
-
-The demo covers:
-1. The Command Center and real-time environmental data fetching.
-2. The Facility Analysis deep-dive for the Phoenix Logistics Hub.
-3. The AI's risk explanation and Before/After operational decisions.
-4. A simulated Heat Escalation event triggering the Alert Center.
-
-## ⚖️ Hackathon Compliance
-
-This project strictly adheres to the FortyGuard Hackathon '26 rules:
-- **Track Alignment:** Purpose-built for Track 3 (Industrial & Enterprise).
-- **API Security:** The API key is heavily sandboxed locally via Vite's `import.meta.env` and never exposed in client-side code, logs, or documentation.
-- **Team Size:** Developed as a solo project (assisted by AI).
-
----
-*Built with ❤️ for a cooler, safer, and more resilient industrial future.*
+Open [http://localhost:5173](http://localhost:5173) to view the dashboard.
