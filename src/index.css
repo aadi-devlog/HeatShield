@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-surface-900 text-gray-100 antialiased;
+  }
+
+  * {
+    @apply border-surface-600;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface-800 border border-surface-600 rounded-xl p-5;
+  }
+
+  .card-sm {
+    @apply bg-surface-800 border border-surface-600 rounded-lg p-4;
+  }
+
+  .badge-critical {
+    @apply bg-red-700/20 border border-red-700/40 text-red-400 text-xs font-semibold px-2.5 py-0.5 rounded-full;
+  }
+
+  .badge-very-high {
+    @apply bg-red-500/20 border border-red-500/40 text-red-400 text-xs font-semibold px-2.5 py-0.5 rounded-full;
+  }
+
+  .badge-high {
+    @apply bg-orange-500/20 border border-orange-500/40 text-orange-400 text-xs font-semibold px-2.5 py-0.5 rounded-full;
+  }
+
+  .badge-moderate {
+    @apply bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 text-xs font-semibold px-2.5 py-0.5 rounded-full;
+  }
+
+  .badge-low {
+    @apply bg-green-500/20 border border-green-500/40 text-green-400 text-xs font-semibold px-2.5 py-0.5 rounded-full;
+  }
+
+  .metric-value {
+    @apply text-3xl font-bold tracking-tight;
+  }
+
+  .metric-label {
+    @apply text-xs font-medium text-gray-500 uppercase tracking-wider;
+  }
+
+  .section-title {
+    @apply text-sm font-semibold text-gray-400 uppercase tracking-wider;
+  }
+
+  .btn-primary {
+    @apply bg-shield-600 hover:bg-shield-500 text-white font-semibold px-4 py-2 rounded-lg transition-colors text-sm;
+  }
+
+  .btn-secondary {
+    @apply bg-surface-700 hover:bg-surface-600 text-gray-300 font-medium px-4 py-2 rounded-lg transition-colors text-sm border border-surface-600;
+  }
+
+  .btn-ghost {
+    @apply text-gray-400 hover:text-white hover:bg-surface-700 px-3 py-2 rounded-lg transition-colors text-sm;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #161b27;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a4d6b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4a5d7b;
+}
+
+/* Risk score ring animation */
+@keyframes risk-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.risk-critical-pulse {
+  animation: risk-pulse 2s ease-in-out infinite;
+}
