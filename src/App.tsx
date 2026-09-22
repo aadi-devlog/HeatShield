@@ -8,6 +8,8 @@ import { AlertsPage } from './pages/AlertsPage';
 
 export default function App() {
   const [activePage, setActivePage] = useState('command');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
   const {
     state,
     setMode,
@@ -19,7 +21,7 @@ export default function App() {
   const activeAlerts = state.alerts.filter(a => a.status === 'ACTIVE').length;
 
   return (
-    <div className="min-h-screen bg-surface-900 flex flex-col">
+    <div className="h-screen bg-surface-900 flex flex-col overflow-hidden">
       <Header
         mode={state.mode}
         onModeChange={setMode}
@@ -28,16 +30,23 @@ export default function App() {
         onEscalate={triggerEscalation}
         onResetEscalation={resetEscalation}
         escalationActive={state.escalationActive}
+        isSidebarOpen={isSidebarOpen}
+        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
         <Sidebar
           activePage={activePage}
-          onNavigate={setActivePage}
+          onNavigate={(page) => {
+            setActivePage(page);
+            setIsSidebarOpen(false); // Close sidebar on mobile after navigating
+          }}
           activeAlerts={activeAlerts}
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
         />
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto w-full">
           {activePage === 'command' && (
             <CommandCenterPage state={state} />
           )}

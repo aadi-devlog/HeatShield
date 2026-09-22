@@ -68,7 +68,7 @@ export function CommandCenterPage({ state }: Props) {
   }
 
   return (
-    <div className="p-6 space-y-6 animate-fade-in">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 animate-fade-in">
       {/* Error banner */}
       {error && (
         <div className="bg-red-900/20 border border-red-800/50 rounded-xl p-4 flex items-start gap-3">
@@ -82,19 +82,19 @@ export function CommandCenterPage({ state }: Props) {
 
       {/* Hero: What problem, who uses it, what FortyGuard provides */}
       <div className="card bg-gradient-to-r from-surface-800 to-surface-700 border-surface-500">
-        <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="text-xs text-shield-400 font-semibold uppercase tracking-wider mb-1">
+            <div className="text-[10px] md:text-xs text-shield-400 font-semibold uppercase tracking-wider mb-1">
               FortyGuard Heat Intelligence → Industrial Operational Decision
             </div>
-            <h1 className="text-2xl font-bold text-gray-100">Phoenix Logistics Hub</h1>
-            <p className="text-gray-400 text-sm mt-1">
+            <h1 className="text-xl md:text-2xl font-bold text-gray-100">Phoenix Logistics Hub</h1>
+            <p className="text-gray-400 text-xs md:text-sm mt-1">
               Outdoor loading &amp; dispatch operations · 47 personnel at risk
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 bg-surface-900/30 sm:bg-transparent p-3 sm:p-0 rounded-lg">
             <div className="text-center">
-              <div className="text-5xl font-bold" style={{ color: riskColor }}>
+              <div className="text-4xl md:text-5xl font-bold" style={{ color: riskColor }}>
                 {riskScore}
               </div>
               <div className="text-xs text-gray-500 mt-1">Risk Score</div>
@@ -107,7 +107,7 @@ export function CommandCenterPage({ state }: Props) {
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <StatCard
           icon={AlertTriangle}
           label="Active Alerts"

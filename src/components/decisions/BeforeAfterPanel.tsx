@@ -108,7 +108,7 @@ export function BeforeAfterPanel({ beforeAfter }: Props) {
           <CheckCircle className="w-4 h-4 text-green-400" />
           <span className="text-sm font-semibold text-green-400">Measurable Impact</span>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <div>
             <div className="metric-label">Exposure Reduction</div>
             <div className="text-3xl font-bold text-green-400">{minutesSaved} min</div>

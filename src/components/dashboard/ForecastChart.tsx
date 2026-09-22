@@ -60,12 +60,12 @@ export function ForecastChart({ hourlyData, mode }: Props) {
 
   return (
     <div className="card">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-shield-400" />
+          <TrendingUp className="w-4 h-4 text-shield-400 shrink-0" />
           <span className="section-title">Heat Risk Trend · Today</span>
         </div>
-        <div className="flex items-center gap-3 text-xs text-gray-500">
+        <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
           {mode === 'demo' && <span className="text-amber-500">Simulated</span>}
           <div className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-orange-500 inline-block" />
@@ -79,12 +79,12 @@ export function ForecastChart({ hourlyData, mode }: Props) {
       </div>
 
       {/* Risk zone annotations */}
-      <div className="flex gap-2 mb-3 text-xs">
+      <div className="flex flex-col sm:flex-row gap-2 mb-3 text-xs">
         {[
           { label: 'CURRENT PLAN 13–16h', color: 'bg-red-500/10 border-red-500/30 text-red-400' },
           { label: 'RECOMMENDED 10–12h', color: 'bg-green-500/10 border-green-500/30 text-green-400' },
         ].map(z => (
-          <div key={z.label} className={`px-2 py-1 rounded border text-xs font-semibold ${z.color}`}>
+          <div key={z.label} className={`px-2 py-1 rounded border text-xs font-semibold whitespace-nowrap text-center sm:text-left ${z.color}`}>
             {z.label}
           </div>
         ))}

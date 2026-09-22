@@ -47,35 +47,35 @@ export function FacilityAnalysisPage({
   }
 
   return (
-    <div className="p-6 space-y-6 animate-fade-in">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 animate-fade-in">
       {/* Facility Header */}
       <div className="card">
-        <div className="flex items-start justify-between">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-shield-700/30 border border-shield-700/50 rounded-xl flex items-center justify-center">
-              <Building2 className="w-6 h-6 text-shield-400" />
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+          <div className="flex items-start gap-3 md:gap-4">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-shield-700/30 border border-shield-700/50 rounded-xl flex items-center justify-center shrink-0">
+              <Building2 className="w-5 h-5 md:w-6 md:h-6 text-shield-400" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-100">{facility.name}</h1>
+              <h1 className="text-lg md:text-xl font-bold text-gray-100">{facility.name}</h1>
               <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-1">
-                <MapPin className="w-3 h-3" />
-                {facility.location}
+                <MapPin className="w-3 h-3 shrink-0" />
+                <span className="truncate">{facility.location}</span>
               </div>
-              <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+              <div className="flex flex-wrap items-center gap-2 md:gap-4 mt-2 text-xs text-gray-500">
                 <div className="flex items-center gap-1">
-                  <Users className="w-3 h-3" />
+                  <Users className="w-3 h-3 shrink-0" />
                   {facility.workerCount} personnel
                 </div>
                 <div className="flex items-center gap-1">
-                  <Activity className="w-3 h-3" />
+                  <Activity className="w-3 h-3 shrink-0" />
                   {facility.operations.length} operations
                 </div>
               </div>
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-xs text-gray-500 mb-1">Active Operations</div>
-            <div className="flex flex-wrap gap-1 justify-end max-w-xs">
+          <div className="w-full sm:w-auto text-left sm:text-right">
+            <div className="text-xs text-gray-500 mb-1 sm:mb-2">Active Operations</div>
+            <div className="flex flex-wrap gap-1 sm:justify-end max-w-full sm:max-w-xs">
               {facility.operations.map((op: string) => (
                 <span key={op} className="bg-surface-700 text-gray-300 text-xs px-2 py-0.5 rounded">
                   {op}

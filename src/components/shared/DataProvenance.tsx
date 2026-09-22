@@ -19,7 +19,7 @@ export function DataProvenance({ provenance }: Props) {
         <Database className="w-3.5 h-3.5 text-shield-400" />
         <span className="section-title text-xs">Data Provenance</span>
       </div>
-      <div className="grid grid-cols-2 gap-3 text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
         <div>
           <div className="text-gray-500 mb-0.5">Source</div>
           <div className="text-gray-200 font-medium">{provenance.source}</div>

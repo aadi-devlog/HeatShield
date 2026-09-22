@@ -41,9 +41,9 @@ export function EnvironmentalPanel({ env, mode }: Props) {
 
   return (
     <div className="card">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-shield-400" />
+          <MapPin className="w-4 h-4 text-shield-400 shrink-0" />
           <span className="section-title">Environmental Conditions</span>
         </div>
         <div className="text-xs text-gray-500">

@@ -91,18 +91,18 @@ export function AlertsPage({ alerts, mode }: Props) {
   };
 
   return (
-    <div className="p-6 space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 animate-fade-in">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-gray-100">Alert Center</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <h1 className="text-lg md:text-xl font-bold text-gray-100">Alert Center</h1>
+          <p className="text-xs md:text-sm text-gray-500 mt-0.5">
             {activeAlerts.length} active · {resolvedAlerts.length} resolved · Phoenix Logistics Hub
           </p>
         </div>
         {mode === 'demo' && (
-          <span className="bg-amber-500/20 border border-amber-500/40 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-full">
+          <div className="bg-amber-500/20 border border-amber-500/40 text-amber-400 text-[10px] md:text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap self-start sm:self-auto">
             DEMO MODE · SIMULATED DATA
-          </span>
+          </div>
         )}
       </div>
 
